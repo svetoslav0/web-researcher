@@ -15,12 +15,11 @@ class PDOResultSet implements ResultSetInterface
     }
 
     /**
-     * @param $className
      * @return \Generator
      */
-    public function fetch($className): \Generator
+    public function fetch(): \Generator
     {
-        while($row = $this->pdoStatement->fetchObject($className)) {
+        while($row = $this->pdoStatement->fetchAll(\PDO::FETCH_ASSOC)) {
             yield $row;
         }
     }

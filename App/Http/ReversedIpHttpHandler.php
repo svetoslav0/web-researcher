@@ -24,9 +24,13 @@ class ReversedIpHttpHandler
 
         $fetchedData = $this->reversedIpService->findMatchingAddresses($getData);
 
-        foreach ($fetchedData as $fetchedDatum) {
-            $hosts[] = $fetchedDatum;
+        foreach ($fetchedData as $currentHost) {
+            $hosts[] = $currentHost;
         }
+
+//        if (empty($hosts)) {
+//            $this->redirectToFirstPage();
+//        }
 
         $this->responseWithJson($hosts);
     }
@@ -35,5 +39,10 @@ class ReversedIpHttpHandler
     {
         header('Content-Type: application/json');
         echo json_encode($hosts);
+    }
+
+    private function redirectToFirstPage()
+    {
+        header('Location: ?target=' . $_GET['target']);
     }
 }

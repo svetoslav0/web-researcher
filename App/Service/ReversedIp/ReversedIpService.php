@@ -9,6 +9,8 @@ use App\Service\DnsGoogleApi\DnsApiServiceInterface;
 class ReversedIpService implements ReversedIpServiceInterface
 {
 
+    const DEFAULT_PAGE = 1;
+
     /**
      * @var DnsApiServiceInterface
      */
@@ -35,6 +37,7 @@ class ReversedIpService implements ReversedIpServiceInterface
     public function findMatchingAddresses(array $getData): \Generator
     {
         $inputData = $getData['target'];
+        $page = $getData['page'] ?? self::DEFAULT_PAGE;
 
         $allAddresses = [];
 
@@ -44,7 +47,6 @@ class ReversedIpService implements ReversedIpServiceInterface
             $allAddresses = [$inputData];
         }
 
-
         $validAddresses = [];
         foreach ($allAddresses as $address) {
             if ($this->isValidIpAddress($address)) {
@@ -52,12 +54,11 @@ class ReversedIpService implements ReversedIpServiceInterface
             }
         }
 
-        $fetchedHosts = $this->reversedIpRepository->getHostsByIps($validAddresses);
+        $fetchedHosts = $this->reversedIpRepository->getHostsByIps($validAddresses, $page);
 
         foreach ($fetchedHosts as $fetchedHost) {
             yield $fetchedHost;
         }
-
     }
 
     public function isValidIpAddress(string $target): bool
